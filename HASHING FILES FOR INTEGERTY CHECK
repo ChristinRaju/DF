@@ -1,0 +1,59 @@
+Create a program to generate and compare file hashes using algorithms
+like MD5 and SHA-256
+
+import hashlib
+filename = input(&quot;Enter the file name: &quot;)
+
+try:
+with open(filename, &quot;rb&quot;) as file:
+data = file.read()
+
+md5_hash = hashlib.md5(data).hexdigest()
+
+sha256_hash = hashlib.sha256(data).hexdigest()
+print(&quot;\nMD5 Hash:&quot;)
+print(md5_hash)
+
+print(&quot;\nSHA-256 Hash:&quot;)
+print(sha256_hash)
+
+except FileNotFoundError:
+print(&quot;File not found. Please check the file name.&quot;)
+
+TEXT DOCUMENT
+evidence.txt
+This is my digital evidence file
+Modified txt :
+This is my modified digital evidence file
+
+ACTUAL COMPARISON
+
+import hashlib
+
+filename = input(&quot;Enter the file name: &quot;)
+
+try:
+with open(filename, &quot;rb&quot;) as file:
+data = file.read()
+
+md5_hash = hashlib.md5(data).hexdigest()
+sha256_hash = hashlib.sha256(data).hexdigest()
+
+print(&quot;\nCurrent MD5:&quot;)
+print(md5_hash)
+
+print(&quot;\nCurrent SHA-256:&quot;)
+
+print(sha256_hash)
+
+original_hash = input(&quot;\nEnter the original SHA-256 hash: &quot;).strip()
+
+if sha256_hash == original_hash:
+print(&quot;\nRESULT: File is unchanged.&quot;)
+print(&quot;Integrity check PASSED.&quot;)
+else:
+print(&quot;\nRESULT: File has been modified.&quot;)
+print(&quot;Integrity check FAILED.&quot;)
+
+except FileNotFoundError:
+print(&quot;File not found. Please check the file name.&quot;)
