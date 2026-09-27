@@ -1,0 +1,86 @@
+Write a Python script to simulate collecting basic digital evidence from system
+logs and files (e.g., fetching system log files).
+
+import os
+import shutil
+import hashlib
+import csv
+from datetime import datetime
+
+source_folder = &quot;Evidence_Source&quot;
+destination_folder = &quot;Collected_Evidence&quot;
+
+os.makedirs(destination_folder, exist_ok=True)
+
+report_file = &quot;evidence_report.csv&quot;
+
+def calculate_hash(file_path):
+sha256 = hashlib.sha256()
+
+with open(file_path, &quot;rb&quot;) as file:
+while True:
+data = file.read(4096)
+
+if not data:
+break
+
+sha256.update(data)
+-
+
+return sha256.hexdigest()
+
+with open(report_file, &quot;w&quot;, newline=&quot;&quot;) as csvfile:
+
+writer = csv.writer(csvfile)
+
+writer.writerow([
+&quot;File Name&quot;,
+&quot;File Size&quot;,
+&quot;Modified Time&quot;,
+&quot;SHA-256 Hash&quot;
+])
+
+for file_name in os.listdir(source_folder):
+
+source_path = os.path.join(source_folder, file_name)
+
+if os.path.isfile(source_path):
+
+destination_path = os.path.join(
+destination_folder,
+file_name
+)
+
+shutil.copy2(source_path, destination_path)
+
+file_size = os.path.getsize(source_path)
+
+modified_time = datetime.fromtimestamp(
+
+os.path.getmtime(source_path)
+)
+
+file_hash = calculate_hash(source_path)
+
+writer.writerow([
+file_name,
+file_size,
+modified_time,
+file_hash
+])
+
+print(&quot;Collected:&quot;, file_name)
+
+print(&quot;\nDigital evidence collection completed.&quot;)
+print(&quot;Evidence saved in:&quot;, destination_folder)
+print(&quot;Report saved as:&quot;, report_file)
+
+TEXT DOCUMENT
+system_log.txt
+2026-08-21 09:00:01 - User login successful
+2026-08-21 09:15:22 - File accessed
+2026-08-21 09:30:45 - USB device connected
+2026-08-21 10:05:12 - User logout
+
+Suspicious_file.txt
+This is a sample file for digital forensic investigation.
