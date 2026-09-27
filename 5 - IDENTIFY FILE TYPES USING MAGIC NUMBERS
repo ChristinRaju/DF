@@ -1,0 +1,63 @@
+Develop a Python script that identifies file types using magic numbers
+(file signatures) instead of relying on file extensions.
+import os
+
+MAGIC_NUMBERS = {
+&quot;JPEG Image&quot;: [b&quot;\xFF\xD8\xFF&quot;],
+&quot;PDF Document&quot;: [b&quot;%PDF&quot;]
+}
+
+def identify_file_type(file_path):
+
+if not os.path.isfile(file_path):
+print(&quot;Error: File does not exist.&quot;)
+return
+
+try:
+with open(file_path, &quot;rb&quot;) as file:
+
+header = file.read(16)
+
+print(&quot;\nFile Analysis Report&quot;)
+
+print(&quot;-&quot; * 35)
+print(&quot;File Name:&quot;, os.path.basename(file_path))
+
+print(&quot;Header Bytes:&quot;, header.hex(&quot; &quot;).upper())
+
+detected_type = &quot;Unknown File Type&quot;
+
+for file_type, signatures in MAGIC_NUMBERS.items():
+
+for signature in signatures:
+
+if header.startswith(signature):
+detected_type = file_type
+break
+
+if detected_type != &quot;Unknown File Type&quot;:
+break
+
+print(&quot;Identified Type:&quot;, detected_type)
+
+extension = os.path.splitext(file_path)[1]
+
+print(&quot;File Extension:&quot;,
+extension if extension else &quot;None&quot;)
+
+if detected_type == &quot;Unknown File Type&quot;:
+print(&quot;Result: Signature not found.&quot;)
+else:
+print(&quot;Result: File signature identified.&quot;)
+
+except PermissionError:
+print(&quot;Error: Permission denied.&quot;)
+
+except OSError as error:
+print(&quot;Error while reading file:&quot;, error)
+
+print(&quot;MAGIC NUMBER FILE TYPE DETECTOR&quot;)
+print(&quot;=&quot; * 40)
+file_path = input(&quot;Enter the path of the file: &quot;)
+
+identify_file_type(file_path)
