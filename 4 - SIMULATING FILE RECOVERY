@@ -7,121 +7,125 @@ import hashlib
 import csv
 from datetime import datetime
 
-SOURCE_DIR = &quot;Evidence_Source&quot;
-RECOVERY_DIR = &quot;Recovered_Files&quot;
-REPORT_FILE = &quot;recovery_report.csv&quot;
+SOURCE_DIR = "Evidence_Source"
+RECOVERY_DIR = "Recovered_Files"
+REPORT_FILE = "recovery_report.csv"
 
 os.makedirs(RECOVERY_DIR, exist_ok=True)
 
+
 def calculate_hash(file_path):
-sha256 = hashlib.sha256()
+    sha256 = hashlib.sha256()
 
-with open(file_path, &quot;rb&quot;) as file:
-while True:
-data = file.read(4096)
+    with open(file_path, "rb") as file:
+        while True:
+            data = file.read(4096)
 
-if not data:
+            if not data:
+                break
 
-break
+            sha256.update(data)
 
-sha256.update(data)
+    return sha256.hexdigest()
 
-return sha256.hexdigest()
 
 def is_text_file(file_path):
-try:
-with open(file_path, &quot;r&quot;, encoding=&quot;utf-8&quot;) as file:
-file.read()
+    try:
+        with open(file_path, "r", encoding="utf-8") as file:
+            file.read()
 
-return True
+        return True
 
-except (UnicodeDecodeError, OSError):
-return False
+    except (UnicodeDecodeError, OSError):
+        return False
+
 
 def recover_deleted_files():
 
-recovery_records = []
-recovered_count = 0
+    recovery_records = []
+    recovered_count = 0
 
-print(&quot;\nStarting file recovery scan...&quot;)
-print(&quot;-&quot; * 45)
+    print("\nStarting file recovery scan...")
+    print("-" * 45)
 
-for root, folders, files in os.walk(SOURCE_DIR):
+    for root, folders, files in os.walk(SOURCE_DIR):
 
-for filename in files:
+        for filename in files:
 
-if filename.endswith(&quot;.deleted&quot;):
+            if filename.endswith(".deleted"):
 
-original_path = os.path.join(root, filename)
+                original_path = os.path.join(root, filename)
 
-print(&quot;\nFound:&quot;, original_path)
+                print("\nFound:", original_path)
 
-if is_text_file(original_path):
+                if is_text_file(original_path):
 
-recovered_name = filename.replace(
-&quot;.deleted&quot;, &quot;&quot;
-)
+                    recovered_name = filename.replace(
+                        ".deleted", ""
+                    )
 
-recovered_path = os.path.join(
-RECOVERY_DIR, recovered_name
-)
+                    recovered_path = os.path.join(
+                        RECOVERY_DIR, recovered_name
+                    )
 
-shutil.copy2(
-original_path,
-recovered_path
-)
+                    shutil.copy2(
+                        original_path,
+                        recovered_path
+                    )
 
-file_hash = calculate_hash(
-recovered_path
-)
+                    file_hash = calculate_hash(
+                        recovered_path
+                    )
 
-recovery_records.append([
-filename,
-recovered_name,
-os.path.getsize(recovered_path),
-file_hash,
-datetime.now().strftime(
-&quot;%Y-%m-%d %H:%M:%S&quot;
-),
-&quot;Recovered&quot;
-])
+                    recovery_records.append([
+                        filename,
+                        recovered_name,
+                        os.path.getsize(recovered_path),
+                        file_hash,
+                        datetime.now().strftime(
+                            "%Y-%m-%d %H:%M:%S"
+                        ),
+                        "Recovered"
+                    ])
 
-recovered_count += 1
+                    recovered_count += 1
 
-print(&quot;Status: Recovered&quot;)
-print(&quot;Saved as:&quot;, recovered_name)
-print(&quot;SHA-256:&quot;, file_hash)
+                    print("Status: Recovered")
+                    print("Saved as:", recovered_name)
+                    print("SHA-256:", file_hash)
 
-else:
-print(&quot;Status: Not a readable text file&quot;)
+                else:
+                    print("Status: Not a readable text file")
 
-with open(
-REPORT_FILE,
-&quot;w&quot;,
-newline=&quot;&quot;,
-encoding=&quot;utf-8&quot;
-) as report:
+    with open(
+        REPORT_FILE,
+        "w",
+        newline="",
+        encoding="utf-8"
+    ) as report:
 
-writer = csv.writer(report)
+        writer = csv.writer(report)
 
-writer.writerow([
-&quot;Original File&quot;,
-&quot;Recovered File&quot;,
-&quot;Size (Bytes)&quot;,
-&quot;SHA-256 Hash&quot;,
-&quot;Recovery Time&quot;,
-&quot;Status&quot;
-])
+        writer.writerow([
+            "Original File",
+            "Recovered File",
+            "Size (Bytes)",
+            "SHA-256 Hash",
+            "Recovery Time",
+            "Status"
+        ])
 
-writer.writerows(recovery_records)
+        writer.writerows(recovery_records)
 
-print(&quot;\n&quot; + &quot;-&quot; * 45)
-print(&quot;Recovery process completed.&quot;)
-print(&quot;Total files recovered:&quot;, recovered_count)
+    print("\n" + "-" * 45)
+    print("Recovery process completed.")
+    print("Total files recovered:", recovered_count)
 
-print(&quot;Report saved as:&quot;, REPORT_FILE)
-if __name__ == &quot;__main__&quot;:
-recover_deleted_files()
+    print("Report saved as:", REPORT_FILE)
+
+
+if __name__ == "__main__":
+    recover_deleted_files()
 
 TEXT DOCUMENT
 notes.txt.deleted - This is a simulated deleted file. Digital forensics
