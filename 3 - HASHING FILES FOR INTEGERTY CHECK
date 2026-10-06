@@ -2,23 +2,25 @@ Create a program to generate and compare file hashes using algorithms
 like MD5 and SHA-256
 
 import hashlib
-filename = input(&quot;Enter the file name: &quot;)
+
+filename = input("Enter the file name: ")
 
 try:
-with open(filename, &quot;rb&quot;) as file:
-data = file.read()
+    with open(filename, "rb") as file:
+        data = file.read()
 
-md5_hash = hashlib.md5(data).hexdigest()
+    md5_hash = hashlib.md5(data).hexdigest()
 
-sha256_hash = hashlib.sha256(data).hexdigest()
-print(&quot;\nMD5 Hash:&quot;)
-print(md5_hash)
+    sha256_hash = hashlib.sha256(data).hexdigest()
 
-print(&quot;\nSHA-256 Hash:&quot;)
-print(sha256_hash)
+    print("\nMD5 Hash:")
+    print(md5_hash)
+
+    print("\nSHA-256 Hash:")
+    print(sha256_hash)
 
 except FileNotFoundError:
-print(&quot;File not found. Please check the file name.&quot;)
+    print("File not found. Please check the file name.")
 
 TEXT DOCUMENT
 evidence.txt
@@ -30,30 +32,29 @@ ACTUAL COMPARISON
 
 import hashlib
 
-filename = input(&quot;Enter the file name: &quot;)
+filename = input("Enter the file name: ")
 
 try:
-with open(filename, &quot;rb&quot;) as file:
-data = file.read()
+    with open(filename, "rb") as file:
+        data = file.read()
 
-md5_hash = hashlib.md5(data).hexdigest()
-sha256_hash = hashlib.sha256(data).hexdigest()
+    md5_hash = hashlib.md5(data).hexdigest()
+    sha256_hash = hashlib.sha256(data).hexdigest()
 
-print(&quot;\nCurrent MD5:&quot;)
-print(md5_hash)
+    print("\nCurrent MD5:")
+    print(md5_hash)
 
-print(&quot;\nCurrent SHA-256:&quot;)
+    print("\nCurrent SHA-256:")
+    print(sha256_hash)
 
-print(sha256_hash)
+    original_hash = input("\nEnter the original SHA-256 hash: ").strip()
 
-original_hash = input(&quot;\nEnter the original SHA-256 hash: &quot;).strip()
-
-if sha256_hash == original_hash:
-print(&quot;\nRESULT: File is unchanged.&quot;)
-print(&quot;Integrity check PASSED.&quot;)
-else:
-print(&quot;\nRESULT: File has been modified.&quot;)
-print(&quot;Integrity check FAILED.&quot;)
+    if sha256_hash == original_hash:
+        print("\nRESULT: File is unchanged.")
+        print("Integrity check PASSED.")
+    else:
+        print("\nRESULT: File has been modified.")
+        print("Integrity check FAILED.")
 
 except FileNotFoundError:
-print(&quot;File not found. Please check the file name.&quot;)
+    print("File not found. Please check the file name.")
